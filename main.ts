@@ -59,6 +59,9 @@ function run(p: Uint8Array, inp: Uint8Array): { out: Uint8Array; code: number } 
         if (op === 0x10) r = (a + b) | 0;
         else if (op === 0x11) r = (a - b) | 0;
         else if (op === 0x12) r = Math.imul(a, b);
+        // Signed div/mod: division by zero traps (exit 4). The one overflow case,
+        // INT32_MIN / -1, does NOT trap — it wraps to INT32_MIN itself, and
+        // INT32_MIN % -1 is 0; both follow from 32-bit two's-complement wrap.
         else if (op === 0x13) { if (b === 0) return end(4); r = a === -2147483648 && b === -1 ? a : (a / b) | 0; }
         else if (op === 0x14) { if (b === 0) return end(4); r = b === -1 ? 0 : (a % b) | 0; }
         else if (op === 0x15) { if (b === 0) return end(4); r = Math.floor((a >>> 0) / (b >>> 0)) | 0; }
